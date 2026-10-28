@@ -1,0 +1,78 @@
+package templates
+
+templ Index() {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="utf-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+			<title>Ninefold</title>
+			<link rel="stylesheet" href="/static/style.css"/>
+			<script src="/static/app.js"></script>
+			<script defer src="/static/alpine.min.js"></script>
+		</head>
+		<body>
+			<main x-data="ninefold" x-on:keydown.window="key($event)" x-on:visibilitychange.window="visibility()">
+				<header>
+					<h1>Ninefold</h1>
+					<div class="timer" x-text="clock" x-bind:class="{ paused: paused }"></div>
+					<button class="icon" x-on:click="togglePause()" x-show="game && !won" x-text="paused ? 'Resume' : 'Pause'"></button>
+				</header>
+				<template x-if="!game">
+					<section class="menu">
+						<p>Pick a difficulty to start a new puzzle.</p>
+						<div class="levels">
+							<template x-for="d in levels" x-bind:key="d">
+								<button x-on:click="newGame(d)" x-text="d"></button>
+							</template>
+						</div>
+						<p class="stats" x-text="statsLine()"></p>
+					</section>
+				</template>
+				<template x-if="game">
+					<section class="play">
+						<div class="meta">
+							<span x-text="game.difficulty"></span>
+							<span x-show="won" class="won">Solved!</span>
+						</div>
+						<div class="board-wrap">
+							<div class="board" x-bind:class="{ hidden: paused }">
+								<template x-for="i in 81" x-bind:key="i">
+									<div
+										class="cell"
+										x-bind:class="cellClass(i - 1)"
+										x-on:click="select(i - 1)"
+									>
+										<template x-if="game.values[i - 1]">
+											<span class="digit" x-text="game.values[i - 1]"></span>
+										</template>
+										<template x-if="!game.values[i - 1]">
+											<div class="cands">
+												<template x-for="d in 9" x-bind:key="d">
+													<span x-bind:class="{ hl: sel >= 0 && game.values[sel] === d }" x-text="hasCand(i - 1, d) ? d : ''"></span>
+												</template>
+											</div>
+										</template>
+									</div>
+								</template>
+							</div>
+							<div class="veil" x-show="paused && !won" x-on:click="togglePause()">Paused — tap to resume</div>
+						</div>
+						<div class="pad">
+							<template x-for="d in 9" x-bind:key="d">
+								<button x-on:click="enter(d)" x-bind:disabled="done(d)" x-bind:class="{ off: done(d) }" x-text="d"></button>
+							</template>
+						</div>
+						<div class="tools">
+							<button x-on:click="undo()">Undo</button>
+							<button x-on:click="erase()">Erase</button>
+							<button x-on:click="pencil = !pencil" x-bind:class="{ on: pencil }">Edit candidates</button>
+							<button x-on:click="toggleAuto()" x-bind:class="{ on: auto }">Auto-candidates</button>
+							<button x-on:click="quit()">New game</button>
+						</div>
+					</section>
+				</template>
+			</main>
+		</body>
+	</html>
+}
