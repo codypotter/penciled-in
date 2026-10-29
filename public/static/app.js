@@ -1,8 +1,8 @@
-// Ninefold game state. Everything lives in the browser; the server only hands out puzzle packs.
+// Penciled In game state. Everything lives in the browser; the server only hands out puzzle packs.
 (() => {
-  const KEY_GAME = 'ninefold:game'
-  const KEY_PREFS = 'ninefold:prefs'
-  const KEY_STATS = 'ninefold:stats'
+  const KEY_GAME = 'penciled-in:game'
+  const KEY_PREFS = 'penciled-in:prefs'
+  const KEY_STATS = 'penciled-in:stats'
   const LEVELS = ['easy', 'medium', 'hard']
 
   // peers[i]: the 20 cells that share a row, column or box with cell i.
@@ -89,7 +89,7 @@
   }
 
   document.addEventListener('alpine:init', () => {
-    Alpine.data('ninefold', () => ({
+    Alpine.data('penciledIn', () => ({
       levels: LEVELS,
       game: load(KEY_GAME, null),
       auto: load(KEY_PREFS, {}).auto ?? true,

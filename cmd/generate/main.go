@@ -13,8 +13,8 @@ import (
 	"sync"
 	"time"
 
-	"ninefold/internal/sudoku"
-	"ninefold/internal/templates"
+	"penciled-in/internal/sudoku"
+	"penciled-in/internal/templates"
 )
 
 type puzzle struct {
@@ -26,7 +26,7 @@ type puzzle struct {
 func main() {
 	count := flag.Int("n", 300, "puzzles per difficulty")
 	out := flag.String("out", "public", "output directory")
-	puzzles := flag.Bool("puzzles", true, "regenerate puzzle packs (skipped if they exist and false)")
+	regen := flag.Bool("regen", false, "overwrite puzzle packs that already exist (missing packs are always generated)")
 	flag.Parse()
 
 	if err := writePage(*out); err != nil {
@@ -34,7 +34,7 @@ func main() {
 	}
 	for _, d := range []sudoku.Difficulty{sudoku.Easy, sudoku.Medium, sudoku.Hard} {
 		path := filepath.Join(*out, "puzzles", d.String()+".json")
-		if _, err := os.Stat(path); err == nil && !*puzzles {
+		if _, err := os.Stat(path); err == nil && !*regen {
 			continue
 		}
 		if err := writePack(path, d, *count); err != nil {

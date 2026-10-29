@@ -6,15 +6,15 @@ templ Index() {
 		<head>
 			<meta charset="utf-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-			<title>Ninefold</title>
+			<title>Penciled In</title>
 			<link rel="stylesheet" href="/static/style.css"/>
 			<script src="/static/app.js"></script>
 			<script defer src="/static/alpine.min.js"></script>
 		</head>
 		<body>
-			<main x-data="ninefold" x-on:keydown.window="key($event)" x-on:visibilitychange.window="visibility()">
+			<main x-data="penciledIn" x-on:keydown.window="key($event)" x-on:visibilitychange.window="visibility()">
 				<header>
-					<h1>Ninefold</h1>
+					<h1>Penciled In</h1>
 					<div class="timer" x-text="clock" x-bind:class="{ paused: paused }"></div>
 					<button class="icon" x-on:click="togglePause()" x-show="game && !won" x-text="paused ? 'Resume' : 'Pause'"></button>
 				</header>

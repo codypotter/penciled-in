@@ -1,4 +1,4 @@
-module ninefold
+module penciled-in
 
 go 1.25.0
 
