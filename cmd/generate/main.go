@@ -13,8 +13,8 @@ import (
 	"sync"
 	"time"
 
-	"penciled-in/internal/sudoku"
-	"penciled-in/internal/templates"
+	"github.com/codypotter/penciled-in/internal/sudoku"
+	"github.com/codypotter/penciled-in/internal/templates"
 )
 
 type puzzle struct {
