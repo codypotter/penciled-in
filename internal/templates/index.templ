@@ -70,10 +70,16 @@ templ Index() {
 							<button x-on:click="pencil = !pencil" x-bind:class="{ on: pencil }">Edit candidates</button>
 							<button x-on:click="quit()">New game</button>
 						</div>
-						<label class="auto">
-							<input type="checkbox" x-bind:checked="auto" x-on:change="toggleAuto()"/>
-							Auto-candidates
-						</label>
+						<div class="options">
+							<label>
+								<input type="checkbox" x-bind:checked="auto" x-on:change="toggleAuto()"/>
+								Auto-candidates
+							</label>
+							<label>
+								<input type="checkbox" x-bind:checked="sound" x-on:change="toggleSound()"/>
+								Sound
+							</label>
+						</div>
 					</section>
 				</template>
 				<canvas class="confetti" x-ref="confetti"></canvas>

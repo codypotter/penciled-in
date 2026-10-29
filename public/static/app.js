@@ -31,6 +31,28 @@
   const packs = {}
   const fetchPack = async (level) => (packs[level] ??= await (await fetch(`/puzzles/${level}.json`)).json())
 
+  // Synthesize a short rising arpeggio that resolves into a major chord.
+  const jingle = () => {
+    try {
+      const ac = new (window.AudioContext || window.webkitAudioContext)()
+      ac.resume()
+      const note = (freq, at, len, vol) => {
+        const o = ac.createOscillator(), g = ac.createGain()
+        o.type = 'triangle'
+        o.frequency.value = freq
+        g.gain.setValueAtTime(0.0001, ac.currentTime + at)
+        g.gain.exponentialRampToValueAtTime(vol, ac.currentTime + at + 0.02)
+        g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + at + len)
+        o.connect(g).connect(ac.destination)
+        o.start(ac.currentTime + at)
+        o.stop(ac.currentTime + at + len + 0.05)
+      }
+      ;[523.25, 659.25, 783.99, 1046.5].forEach((f, i) => note(f, i * 0.11, 0.45, 0.18))
+      ;[523.25, 659.25, 783.99, 1046.5].forEach((f) => note(f, 0.5, 1.4, 0.1))
+      setTimeout(() => ac.close(), 2500)
+    } catch {}
+  }
+
   const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches
 
   // Fire a one-off confetti burst on a full-screen canvas.
@@ -70,7 +92,8 @@
     Alpine.data('ninefold', () => ({
       levels: LEVELS,
       game: load(KEY_GAME, null),
-      auto: load(KEY_PREFS, { auto: true }).auto,
+      auto: load(KEY_PREFS, {}).auto ?? true,
+      sound: load(KEY_PREFS, {}).sound ?? true,
       stats: load(KEY_STATS, { played: {}, solved: {}, best: {} }),
       sel: -1,
       pencil: false,
@@ -182,8 +205,15 @@
 
       toggleAuto() {
         this.auto = !this.auto
-        save(KEY_PREFS, { auto: this.auto })
+        this.savePrefs()
       },
+
+      toggleSound() {
+        this.sound = !this.sound
+        this.savePrefs()
+      },
+
+      savePrefs() { save(KEY_PREFS, { auto: this.auto, sound: this.sound }) },
 
       snapshot() {
         const g = this.game
@@ -212,6 +242,7 @@
 
       // Wave ripples out from the final cell; confetti bursts over the page.
       celebrate() {
+        if (this.sound) jingle()
         if (reducedMotion()) return
         this.origin = this.sel >= 0 ? this.sel : 40
         this.celebrating = true
