@@ -41,6 +41,7 @@ templ Index() {
 									<div
 										class="cell"
 										x-bind:class="cellClass(i - 1)"
+										x-bind:style="cellStyle(i - 1)"
 										x-on:click="select(i - 1)"
 									>
 										<template x-if="game.values[i - 1]">
@@ -75,6 +76,7 @@ templ Index() {
 						</label>
 					</section>
 				</template>
+				<canvas class="confetti" x-ref="confetti"></canvas>
 			</main>
 		</body>
 	</html>

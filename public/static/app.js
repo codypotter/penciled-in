@@ -31,6 +31,41 @@
   const packs = {}
   const fetchPack = async (level) => (packs[level] ??= await (await fetch(`/puzzles/${level}.json`)).json())
 
+  const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  // Fire a one-off confetti burst on a full-screen canvas.
+  const confetti = (canvas) => {
+    const dpr = window.devicePixelRatio || 1
+    const w = (canvas.width = innerWidth * dpr), h = (canvas.height = innerHeight * dpr)
+    const ctx = canvas.getContext('2d')
+    const colors = ['#2a5bd7', '#8fb0ff', '#f5b700', '#e5484d', '#30a46c', '#ab4aba']
+    const parts = Array.from({ length: 160 }, () => {
+      const a = -Math.PI / 2 + (Math.random() - 0.5) * 1.6, v = (8 + Math.random() * 12) * dpr
+      return {
+        x: w / 2, y: h * 0.45, vx: Math.cos(a) * v, vy: Math.sin(a) * v,
+        s: (5 + Math.random() * 6) * dpr, r: Math.random() * 6.28, vr: (Math.random() - 0.5) * 0.4,
+        c: colors[Math.floor(Math.random() * colors.length)],
+      }
+    })
+    const start = performance.now()
+    const frame = (now) => {
+      ctx.clearRect(0, 0, w, h)
+      let live = false
+      for (const p of parts) {
+        p.vy += 0.35 * dpr; p.vx *= 0.99; p.x += p.vx; p.y += p.vy; p.r += p.vr
+        if (p.y < h + 20) live = true
+        ctx.save()
+        ctx.translate(p.x, p.y); ctx.rotate(p.r)
+        ctx.fillStyle = p.c
+        ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2)
+        ctx.restore()
+      }
+      if (live && now - start < 4000) requestAnimationFrame(frame)
+      else ctx.clearRect(0, 0, w, h)
+    }
+    requestAnimationFrame(frame)
+  }
+
   document.addEventListener('alpine:init', () => {
     Alpine.data('ninefold', () => ({
       levels: LEVELS,
@@ -43,6 +78,8 @@
       history: [],
       tickedAt: Date.now(),
       elapsed: 0,
+      celebrating: false,
+      origin: 40,
 
       init() {
         this.elapsed = this.game?.elapsed ?? 0
@@ -170,6 +207,22 @@
         s.solved[g.difficulty] = (s.solved[g.difficulty] ?? 0) + 1
         if (!(g.difficulty in s.best) || t < s.best[g.difficulty]) s.best[g.difficulty] = t
         save(KEY_STATS, s)
+        this.celebrate()
+      },
+
+      // Wave ripples out from the final cell; confetti bursts over the page.
+      celebrate() {
+        if (reducedMotion()) return
+        this.origin = this.sel >= 0 ? this.sel : 40
+        this.celebrating = true
+        confetti(this.$refs.confetti)
+        setTimeout(() => (this.celebrating = false), 2500)
+      },
+
+      cellStyle(i) {
+        if (!this.celebrating) return ''
+        const d = Math.hypot(Math.floor(i / 9) - Math.floor(this.origin / 9), (i % 9) - (this.origin % 9))
+        return `--d:${Math.round(d * 70)}ms`
       },
 
       // Digits with all nine placed are disabled on the pad.
@@ -191,6 +244,7 @@
           conflict: this.conflict(i),
           'box-r': c % 3 === 2 && c !== 8,
           'box-b': r % 3 === 2 && r !== 8,
+          win: this.celebrating,
           'edge-r': c === 8,
           'edge-b': r === 8,
         }

@@ -73,7 +73,8 @@ button:disabled, button.off { opacity: 0.3; cursor: default; }
 .board-wrap { position: relative; }
 .board {
   display: grid;
-  grid-template-columns: repeat(9, 1fr);
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  grid-template-rows: repeat(9, minmax(0, 1fr));
   aspect-ratio: 1;
   border: 2px solid var(--line-strong);
   user-select: none;
@@ -103,6 +104,14 @@ button:disabled, button.off { opacity: 0.3; cursor: default; }
 .cell.same { background: var(--same); }
 .cell.selected { background: var(--sel); }
 .cell.conflict { background: var(--bad); }
+
+.cell.win { animation: wave 0.7s ease var(--d, 0ms) both; }
+@keyframes wave {
+  0%, 100% { transform: scale(1); }
+  40% { transform: scale(1.25); background: var(--sel); z-index: 1; }
+}
+
+.confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
 
 .digit { font-size: clamp(1.2rem, 6vw, 1.9rem); color: var(--entry); }
 .cell.given .digit { color: var(--given); font-weight: 600; }
