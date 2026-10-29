@@ -191,6 +191,8 @@
           conflict: this.conflict(i),
           'box-r': c % 3 === 2 && c !== 8,
           'box-b': r % 3 === 2 && r !== 8,
+          'edge-r': c === 8,
+          'edge-b': r === 8,
         }
       },
 

@@ -95,8 +95,8 @@ button:disabled, button.off { opacity: 0.3; cursor: default; }
   border-bottom: 1px solid var(--line);
   cursor: pointer;
 }
-.cell:nth-child(9n) { border-right: 0; }
-.cell:nth-child(n+73) { border-bottom: 0; }
+.cell.edge-r { border-right: 0; }
+.cell.edge-b { border-bottom: 0; }
 .cell.box-r { border-right: 2px solid var(--line-strong); }
 .cell.box-b { border-bottom: 2px solid var(--line-strong); }
 .cell.peer { background: var(--peer); }
@@ -125,3 +125,5 @@ button:disabled, button.off { opacity: 0.3; cursor: default; }
 .pad button { padding: 10px 0; font-size: 1.25rem; }
 .tools { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
 .tools button { flex: 1 1 auto; font-size: 0.9rem; }
+.auto { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 16px; cursor: pointer; }
+.auto input { width: 1.1rem; height: 1.1rem; accent-color: var(--accent); }

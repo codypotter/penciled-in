@@ -67,9 +67,12 @@ templ Index() {
 							<button x-on:click="undo()">Undo</button>
 							<button x-on:click="erase()">Erase</button>
 							<button x-on:click="pencil = !pencil" x-bind:class="{ on: pencil }">Edit candidates</button>
-							<button x-on:click="toggleAuto()" x-bind:class="{ on: auto }">Auto-candidates</button>
 							<button x-on:click="quit()">New game</button>
 						</div>
+						<label class="auto">
+							<input type="checkbox" x-bind:checked="auto" x-on:change="toggleAuto()"/>
+							Auto-candidates
+						</label>
 					</section>
 				</template>
 			</main>
